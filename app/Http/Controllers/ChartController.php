@@ -12,7 +12,7 @@ class ChartController extends Controller
 	public function getWeeklyRetentionData() {
 		$chart = new WeeklyRetentionChart(new FileDataSource(), new WeeklyChartFormatter());
 		$chart->loadChartData();
-		$data = $chart->formatChartData();
+		$data = $chart->renderChart();
 
 		return $data;
     }

@@ -12,6 +12,7 @@ class WeeklyRetentionChart implements ChartInterface {
 	private $data_source;
 	private $formatter;
 	private $row_data;
+	protected $chart_data;
 
 	public function __construct( DataSourceInterface $data_source, FormatterInterface $formatter ) {
 		$this->data_source = $data_source;
@@ -20,23 +21,18 @@ class WeeklyRetentionChart implements ChartInterface {
 
 	public function loadChartData() {
 		$this->row_data = $this->data_source->getDataFromSource();
+		$this->chart_data = $this->getWeeklyRetentionData();
 	}
 
-	public function formatChartData() {
-		$this->formatter->setTitle("Weekly Retentions");
-		$this->formatter->setYTitle("Percentage of users");
-		$this->formatter->setXTitle("Weekly distribution");
-		$this->formatter->setSeries($this->getWeeklyRetentionData());
-		return $this->formatter->formatData();
+	public function renderChart() {
+		$this->formatter->formatChartTitles();
+		return $this->formatter->formatData($this->chart_data);
 	}
 
 	private function getWeeklyRetentionData() {
 		$weeklyCounts = $this->calculateWeeklyCounts($this->row_data);
-
 		$weeklyRetentions = $this->calculateWeeklyRetentions($weeklyCounts);
-
-		$formattedData = $this->formatWeeklyRetentions($weeklyRetentions);
-
+		$formattedData = $this->formatter->applySpecialFormattingToData($weeklyRetentions);
 		return $formattedData;
 	}
 
@@ -45,8 +41,8 @@ class WeeklyRetentionChart implements ChartInterface {
 
 		foreach($rawData as $row) {
 			$date = (new Carbon($row['created_at']))->startOfWeek()->format('Y-m-d');
-			$data[$date][$row['onboarding_perentage']] =
-				isset($data[$date][$row['onboarding_perentage']]) ? ++$data[$date][$row['onboarding_perentage']] : 1;
+			$data[$date][$row['on_boarding_parentage']] =
+				isset($data[$date][$row['on_boarding_parentage']]) ? ++$data[$date][$row['on_boarding_parentage']] : 1;
 		}
 
 		return $data;
@@ -70,20 +66,5 @@ class WeeklyRetentionChart implements ChartInterface {
 
 		return $rawData;
 
-	}
-
-	private function formatWeeklyRetentions(array $rawData) {
-		$formattedArray = [];
-
-		foreach($rawData as $week => $countArr){
-			$tempArr['name'] = $week;
-			foreach ($countArr as $percentage => $count) {
-				$tempArr['data'][] = [$percentage,$count];
-			}
-			$formattedArray[] = $tempArr;
-			unset($tempArr);
-		}
-
-		return $formattedArray;
 	}
 }
