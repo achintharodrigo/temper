@@ -22,21 +22,14 @@ class WeeklyRetentionTest extends TestCase
     }
 
 	/** @test */
-	public function get_data_from_file_data_source() {
+	public function get_data_from_file_data_source()
+	{
 		$response = $this->get('/weekly_retention');
 		$response->assertStatus( 200)
 			->assertJsonStructure([
 				"err",
+				"msg",
 				"data" => []
 			]);
-	}
-
-	/** @test */
-	public function check_if_file_data_loading_correctly() {
-		$fileData = (new FileDataSource())->getDataFromSource();
-		foreach($fileData as $item) {
-			$this->assertArrayHasKey( 'user_id', $item);
-			$this->assertIsArray($item);
-		}
 	}
 }

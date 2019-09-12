@@ -20,13 +20,24 @@ class WeeklyChartFormatter implements FormatterInterface {
 		$mainArr['title'] = ['text' => $this->title];
 		$mainArr['yAxis'] = ['title' => ['text' => $this->yTitle]];
 		$mainArr['xAxis'] = ['title' => ['text' => $this->xTitle]];
+		$mainArr['msg'] = "";
 
-		$mainArr['series'] = $data;
 
-		return [
-			'err' =>false,
-			'data'=>json_encode($mainArr)
-		];
+		if(!empty($data)) {
+			$mainArr['series'] = $data;
+			return [
+				'err' =>false,
+				'msg' => '',
+				'data'=>json_encode($mainArr)
+			];
+		} else {
+			$mainArr['series'] = $data;
+			return [
+				'err' =>true,
+				'msg' => "Data Array is Empty",
+				'data'=>json_encode($mainArr)
+			];
+		}
 	}
 
 	public function formatChartTitles() {

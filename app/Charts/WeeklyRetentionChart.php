@@ -12,12 +12,14 @@ class WeeklyRetentionChart implements ChartInterface {
 	private $data_source;
 	private $formatter;
 	private $row_data;
-	protected $chart_data;
+	protected $chart_data = [];
 
 	public function __construct( DataSourceInterface $data_source, FormatterInterface $formatter ) {
 		$this->data_source = $data_source;
 		$this->formatter = $formatter;
 	}
+
+	public function getRowData() { return $this->row_data; }
 
 	public function loadChartData() {
 		$this->row_data = $this->data_source->getDataFromSource();
@@ -41,8 +43,8 @@ class WeeklyRetentionChart implements ChartInterface {
 
 		foreach($rawData as $row) {
 			$date = (new Carbon($row['created_at']))->startOfWeek()->format('Y-m-d');
-			$data[$date][$row['on_boarding_parentage']] =
-				isset($data[$date][$row['on_boarding_parentage']]) ? ++$data[$date][$row['on_boarding_parentage']] : 1;
+			$data[$date][$row['onboarding_perentage']] =
+				isset($data[$date][$row['onboarding_perentage']]) ? ++$data[$date][$row['onboarding_perentage']] : 1;
 		}
 
 		return $data;
